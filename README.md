@@ -1,6 +1,6 @@
 ## Features
 
-mpvRx focuses on a streamlined, high-performance Android media player experience built around mpv. It combines clean visual design with practical playback customization.
+mpvRx focuses on a streamlined, high-performance Android media player experience built around mpv. It combines clean visual design with practical offline playback customization.
 
 - Core player
   - libmpv-based Android video player
@@ -38,7 +38,6 @@ mpvRx focuses on a streamlined, high-performance Android media player experience
   - Primary and secondary subtitle support
   - ASS override modes
   - Custom subtitle styling
-  - Online subtitle search
   - Subtitle font management
   - Explicit subtitle off option
 
