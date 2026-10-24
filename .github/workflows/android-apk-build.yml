@@ -1,0 +1,67 @@
+name: Android APK Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      flavor:
+        description: Android product flavor
+        required: true
+        default: standard
+        type: choice
+        options:
+          - standard
+          - playstore
+          - noVulkan
+          - fongmi
+      build_type:
+        description: Build type
+        required: true
+        default: debug
+        type: choice
+        options:
+          - debug
+          - release
+  push:
+    branches:
+      - master
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses || true
+
+      - name: Build APK
+        shell: bash
+        run: |
+          FLAVOR="${{ github.event.inputs.flavor || 'standard' }}"
+          TYPE="${{ github.event.inputs.build_type || 'debug' }}"
+          TASK="assemble${FLAVOR^}${TYPE^}"
+          echo "Running Gradle task: $TASK"
+          chmod +x gradlew
+          ./gradlew --no-daemon "$TASK"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-${{ github.event.inputs.flavor || 'standard' }}-${{ github.event.inputs.build_type || 'debug' }}
+          path: |
+            app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
